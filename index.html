@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <title>Калькулятор ДК і дальності</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 20px auto;
+    }
+    input {
+      width: 100%;
+      margin-bottom: 8px;
+      padding: 6px;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<h3>Артилерійський калькулятор</h3>
+
+<h4>Вогнева позиція (ВП)</h4>
+<input id="Evp" type="number" placeholder="E ВП">
+<input id="Nvp" type="number" placeholder="N ВП">
+
+<h4>Ціль (Ц)</h4>
+<input id="Ec" type="number" placeholder="E Ц">
+<input id="Nc" type="number" placeholder="N Ц">
+
+<button onclick="calculate()">Розрахувати</button>
+
+<div class="result" id="output"></div>
+
+<script>
+function calculate() {
+  const Evp = Number(document.getElementById('Evp').value);
+  const Nvp = Number(document.getElementById('Nvp').value);
+  const Ec  = Number(document.getElementById('Ec').value);
+  const Nc  = Number(document.getElementById('Nc').value);
+
+  const dE = Ec - Evp;
+  const dN = Nc - Nvp;
+
+  // Дальність
+  const D = Math.sqrt(dE * dE + dN * dN);
+
+  // Допоміжний кут β
+  const beta = Math.atan(Math.abs(dE / dN)) * 180 / Math.PI;
+
+  let alphaDeg;
+
+  // Визначення квадранту
+  if (dE >= 0 && dN >= 0) {
+    alphaDeg = beta; // Пн-Сх
+  } else if (dE >= 0 && dN < 0) {
+    alphaDeg = 180 - beta; // Пд-Сх
+  } else if (dE < 0 && dN < 0) {
+    alphaDeg = 180 + beta; // Пд-Зх
+  } else {
+    alphaDeg = 360 - beta; // Пн-Зх
+  }
+
+  // У тисячні (6000)
+  const alphaMil = alphaDeg * 6000 / 360;
+
+  document.getElementById('output').innerHTML = `
+    ΔE = ${dE.toFixed(0)} м<br>
+    ΔN = ${dN.toFixed(0)} м<br>
+    D ≈ ${D.toFixed(0)} м<br>
+    α ≈ ${alphaMil.toFixed(0)} тис.
+  `;
+}
+</script>
+
+</body>
+</html>
